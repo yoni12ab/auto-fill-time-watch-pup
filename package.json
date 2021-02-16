@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "auto-fill-time-watch-pup": "index.js"
+    "auto-fill-time-watch-pup": "node index.js"
   },
   "dependencies": {
     "chrome-paths": "^1.0.1",
