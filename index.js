@@ -1,10 +1,9 @@
+#!/usr/bin/env node
 const puppeteer = require("puppeteer-core");
 const chromePaths = require("chrome-paths");
 (async () => {
   console.log("process ", process.argv);
-  const COMPANY_NUMBER = process.argv[2];
-  const EMPLOYEE_NUMBER = process.argv[3];
-  const PASSWORD = process.argv[4];
+  const [, , COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD] = process.argv;
   let page;
   console.log("COMPANY_NUMBER " + COMPANY_NUMBER);
   if (!COMPANY_NUMBER) {
