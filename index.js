@@ -131,7 +131,7 @@ const chromePaths = require("chrome-paths");
       );
       const output = [];
       trs.map((day) => {
-        if (!day.innerHTML.includes("שבת") && !day.innerHTML.includes("שישי")) {
+        if (!day.innerHTML.includes("שבת") && !day.innerHTML.includes("שישי") && !day.innerHTML.includes("ערב חג")) {
           const onclickText = day.getAttribute("onclick");
           const href = onclickText.match(
             /(?<=javascript:openInnewWindow\(').*?(?=')/
