@@ -19,7 +19,11 @@ const chromePaths = require("chrome-paths");
     const launchOptions = {
       headless: false,
       executablePath: chromePaths.chrome, // '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // because we are using puppeteer-core so we must define this option
-      args: ["--start-maximized"],
+      args: [`--window-size=1920,1080`],
+      defaultViewport: {
+        width: 1920,
+        height: 1080,
+      },
     };
 
     const browser = await puppeteer.launch(launchOptions);
@@ -61,90 +65,44 @@ const chromePaths = require("chrome-paths");
   }
 
   async function fillMissing() {
-    const daysLinks = await getAllDaysToUpdate();
-
-    for (const dayLink of daysLinks) {
-      await page.goto("https://checkin.timewatch.co.il/punch/" + dayLink, {
-        waitUntil: "networkidle2",
-      });
-      const startHour = await page.evaluate(
-        () => document.querySelector("#ehh0").value
-      );
-      if (!startHour) {
-        await page.type("#ehh0", "09", { delay: 20 });
-        await page.type("#emm0", getMinutes(), { delay: 20 });
+    const tableRowsSelectors = await getAllDaysSelectorsToUpdate();
+    for (let i = 0; i < tableRowsSelectors.length; i++) {
+      const currentRow = await page.$(tableRowsSelectors[i]);
+      const dayDescription = await (
+        await currentRow.getProperty("innerText")
+      ).jsonValue();
+      if (dayDescription.includes("חסרה")) {
+        console.log(dayDescription);
+        await currentRow.click();
+        await fillHours();
       }
-
-      const endHour = await page.evaluate(
-        () => document.querySelector("#xhh0").value
-      );
-      if (!endHour) {
-        await page.type("#xhh0", "18", { delay: 20 });
-        await page.type("#xmm0", getMinutes(), { delay: 20 });
-      }
-      await page.waitFor(2000);
-      await page.click('[src="/images/update.jpg"]');
-      await page.waitFor(2000);
     }
-    /*
-        cy.get('tr[onclick*="openInnewWindow"]').each((day) => {
-            const dayElm = day[0];
-            if (
-                !dayElm.innerHTML.includes('שבת') &&
-                !dayElm.innerHTML.includes('שישי')
-            ) {
-                const onclickText = day[0].getAttribute('onclick');
-                const href = onclickText.match(
-                    /(?<=javascript:openInnewWindow\(').*?(?=')/
-                )[0];
-                cy.visit('https://checkin.timewatch.co.il/punch/' + href);
-                cy.get('#ehh0').then((inputFromHour) => {
-                    if (inputFromHour && !inputFromHour[0].value) {
-                        cy.get('#ehh0').type('09');
-                        const minutes = getMinutes();
-                        cy.get('#emm0').type(minutes);
-                    }
-                });
-
-                cy.get('#xhh0').then((inputToHour) => {
-                    if (inputToHour && !inputToHour[0].value) {
-                        cy.get('#xhh0').type('18');
-                        const minutes = getMinutes();
-                        cy.get('#xmm0').type(minutes);
-                    }
-                });
-
-                cy.wait(1000);
-                cy.get('[src="/images/update.jpg"]').click();
-                cy.wait(1000);
-            }
-        });
-        return cy.wait(2000);
-
-        */
   }
 
-  async function getAllDaysToUpdate() {
-    return await page.evaluate(() => {
-      const trs = Array.from(
-        document.querySelectorAll('tr[onclick*="openInnewWindow"]')
-      );
-      const output = [];
-      trs.map((day) => {
-        if (!day.innerHTML.includes("שבת") && !day.innerHTML.includes("שישי") && !day.innerHTML.includes("ערב חג")) {
-          const onclickText = day.getAttribute("onclick");
-          const href = onclickText.match(
-            /(?<=javascript:openInnewWindow\(').*?(?=')/
-          )[0];
-          output.push(href);
-        }
-      });
-      return output;
+  async function fillHours() {
+    await page.waitForSelector("#ehh0");
+    await page.evaluate(() => {
+      const getMinutes = () => {
+        const minute = parseInt(((Math.random() * 100) % 59) + 1);
+        return minute < 10 ? `0${minute}` : minute + "";
+      };
+      document.querySelector("#ehh0").value = "09";
+      document.querySelector("#emm0").value = getMinutes();
+      document.querySelector("#xhh0").value = "18";
+      document.querySelector("#xmm0").value = getMinutes();
     });
+    await page.waitFor(1000);
+    await page.click(".modal-popup-footer .modal-popup-btn-confirm");
+    await page.waitFor(2000);
   }
 
-  function getMinutes() {
-    const minute = parseInt(((Math.random() * 100) % 59) + 1);
-    return minute < 10 ? `0${minute}` : minute + "";
+  async function getAllDaysSelectorsToUpdate() {
+    return await page.evaluate(() => {
+      return [
+        ...document.querySelectorAll('.table-responsive tr[class*="type"]'),
+      ]
+        .filter((tr) => tr.innerText.includes("חסרה"))
+        .map((tr) => `[onclick="${tr.getAttribute("onclick")}"]`);
+    });
   }
 })();
