@@ -104,7 +104,7 @@ const chromePaths = require("chrome-paths");
       return [
         ...document.querySelectorAll('.table-responsive tr[class*="type"]'),
       ]
-        .filter((tr) => tr.innerText.includes("חסרה"))
+        .filter((tr) => tr.innerHTML.includes("background-color:red"))
         .map((tr) => `[onclick="${tr.getAttribute("onclick")}"]`);
     });
   }
