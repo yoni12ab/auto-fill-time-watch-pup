@@ -70,11 +70,12 @@ const chromePaths = require("chrome-paths");
     const tableRowsSelectors = await getAllDaysSelectorsToUpdate();
     for (let i = 0; i < tableRowsSelectors.length; i++) {
       const currentRow = await page.$(tableRowsSelectors[i]);
-      const dayDescription = await (
-        await currentRow.getProperty("innerText")
+      const rowInnerHtml = await (
+        await currentRow.getProperty("innerHTML")
       ).jsonValue();
-      if (dayDescription.includes("חסרה")) {
-        console.log(dayDescription);
+      // meaning there is error in the report like 'חסרה כניסה או יציאה'
+      if (rowInnerHtml.includes("background-color:red")) {
+        //console.log(dayDescription);
         await currentRow.click();
         await fillHours();
       }
