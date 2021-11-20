@@ -35,10 +35,9 @@ const chromePaths = require("chrome-paths");
     await login(COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD);
     await gotToReports();
     await selectMonthIfNeeded();
-    await page.waitFor(3000);
-    await fillMissing();
+    // await fillMissing();
 
-    await browser.close();
+    // await browser.close();
   }
 
   async function login(companyNumber, employeeNumber, password) {
@@ -70,12 +69,11 @@ const chromePaths = require("chrome-paths");
     const tableRowsSelectors = await getAllDaysSelectorsToUpdate();
     for (let i = 0; i < tableRowsSelectors.length; i++) {
       const currentRow = await page.$(tableRowsSelectors[i]);
-      const rowInnerHtml = await (
-        await currentRow.getProperty("innerHTML")
+      const dayDescription = await (
+        await currentRow.getProperty("innerText")
       ).jsonValue();
-      // meaning there is error in the report like 'חסרה כניסה או יציאה'
-      if (rowInnerHtml.includes("background-color:red")) {
-        //console.log(dayDescription);
+      if (dayDescription.includes("חסרה")) {
+        console.log(dayDescription);
         await currentRow.click();
         await fillHours();
       }
@@ -104,7 +102,7 @@ const chromePaths = require("chrome-paths");
       return [
         ...document.querySelectorAll('.table-responsive tr[class*="type"]'),
       ]
-        .filter((tr) => tr.innerHTML.includes("background-color:red"))
+        .filter((tr) => tr.innerText.includes("חסרה"))
         .map((tr) => `[onclick="${tr.getAttribute("onclick")}"]`);
     });
   }
