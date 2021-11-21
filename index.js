@@ -35,9 +35,9 @@ const chromePaths = require("chrome-paths");
     await login(COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD);
     await gotToReports();
     await selectMonthIfNeeded();
-    // await fillMissing();
+    await fillMissing();
 
-    // await browser.close();
+    await browser.close();
   }
 
   async function login(companyNumber, employeeNumber, password) {
