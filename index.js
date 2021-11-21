@@ -35,6 +35,7 @@ const chromePaths = require("chrome-paths");
     await login(COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD);
     await gotToReports();
     await selectMonthIfNeeded();
+    await page.waitFor(3000);
     await fillMissing();
 
     await browser.close();
@@ -49,13 +50,13 @@ const chromePaths = require("chrome-paths");
   }
 
   async function selectMonthIfNeeded() {
-    const dayOfMonth = new Date().getDate();
-    if (dayOfMonth > 24) {
-      const currentMonth = new Date().getMonth() + 1;
-      await page.click(
-        `[name="cpick"] [name="month"] option[value="${currentMonth - 1}"]`
-      );
-      await page.click('a[href*="watch_report"]');
+    const currentMonth = (new Date().getMonth() + 1).toString();
+    const selectedMonth = await page.$('[name="month"] option[selected]');
+    if (
+      selectedMonth &&
+      currentMonth !== (await selectedMonth.getProperty("innerText"))
+    ) {
+      await page.select('[name="month"]', currentMonth);
     }
   }
 
