@@ -19,8 +19,11 @@ const chromePaths = require("chrome-paths");
     const launchOptions = {
       headless: false,
       executablePath: chromePaths.chrome, // '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // because we are using puppeteer-core so we must define this option
-      defaultViewport: null,
-      args: ["--start-maximized"],
+      args: [`--window-size=1920,1080`],
+      defaultViewport: {
+        width: 1920,
+        height: 1080,
+      },
     };
 
     const browser = await puppeteer.launch(launchOptions);
@@ -28,7 +31,11 @@ const chromePaths = require("chrome-paths");
     await page.goto("https://checkin.timewatch.co.il/punch/punch.php", {
       waitUntil: "networkidle2",
     });
-
+    await page.setViewport({
+      width: 1920,
+      height: 1080,
+      deviceScaleFactor: 1,
+    });
     await login(COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD);
     await gotToReports();
     await selectMonthIfNeeded();
