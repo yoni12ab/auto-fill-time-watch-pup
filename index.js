@@ -19,8 +19,8 @@ const chromePaths = require("chrome-paths");
     const launchOptions = {
       headless: false,
       executablePath: chromePaths.chrome, // '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // because we are using puppeteer-core so we must define this option
-      args: [`--window-size=1920,1080`],
       defaultViewport: null,
+      args: ["--start-maximized"],
     };
 
     const browser = await puppeteer.launch(launchOptions);
