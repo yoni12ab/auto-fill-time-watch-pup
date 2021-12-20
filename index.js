@@ -28,14 +28,16 @@ const chromePaths = require("chrome-paths");
 
     const browser = await puppeteer.launch(launchOptions);
     page = await browser.newPage();
-    await page.goto("https://checkin.timewatch.co.il/punch/punch.php", {
-      waitUntil: "networkidle2",
-    });
+    console.log("setting setViewport");
     await page.setViewport({
       width: 1920,
       height: 1080,
       deviceScaleFactor: 1,
     });
+    await page.goto("https://checkin.timewatch.co.il/punch/punch.php", {
+      waitUntil: "networkidle2",
+    });
+
     await login(COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD);
     await gotToReports();
     await selectMonthIfNeeded();
