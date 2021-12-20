@@ -28,7 +28,7 @@ const chromePaths = require("chrome-paths");
 
     const browser = await puppeteer.launch(launchOptions);
     page = await browser.newPage();
-    console.log("setting setViewport");
+
     await page.setViewport({
       width: 1920,
       height: 1080,
