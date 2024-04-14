@@ -48,10 +48,10 @@ const chromePaths = require("chrome-paths");
   }
 
   async function login(companyNumber, employeeNumber, password) {
-    await page.type("#compKeyboard", companyNumber, { delay: 20 });
-    await page.type("#nameKeyboard", employeeNumber, { delay: 20 });
-    await page.type("#pwKeyboard", password, { delay: 20 });
-    await page.click('[src="/images/entrance.jpg"]');
+    await page.type("#login-comp-input", companyNumber, { delay: 20 });
+    await page.type("#login-name-input", employeeNumber, { delay: 20 });
+    await page.type("#login-pw-input", password, { delay: 20 });
+    await page.click(".btn-lg");
     await page.waitFor(2000);
   }
 
