@@ -67,8 +67,8 @@ const chromePaths = require("chrome-paths");
   }
 
   async function gotToReports() {
-    await page.waitForSelector('[href*="editwh.php"]');
-    await page.click('[href*="editwh.php"]');
+    await page.waitForSelector(".edit-info a");
+    await page.click(".edit-info a");
     await page.waitFor(2000);
   }
 
