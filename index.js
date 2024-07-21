@@ -58,6 +58,8 @@ const chromePaths = require("chrome-paths");
   async function selectMonthIfNeeded() {
     const currentMonth = (new Date().getMonth() + 1).toString();
     const selectedMonth = await page.$('[name="month"] option[selected]');
+    await page.pause()
+
     if (
       selectedMonth &&
       currentMonth !== (await selectedMonth?.[0]?.value)
