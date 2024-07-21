@@ -68,7 +68,7 @@ const chromePaths = require("chrome-paths");
       await page.evaluate((currentMonth) => {
         document.querySelector('[name="month"]').value = currentMonth;
       },currentMonth );
-      await page.waitFor(2000);
+
     }
   }
 
@@ -81,6 +81,7 @@ const chromePaths = require("chrome-paths");
   async function fillMissing() {
     const tableRowsSelectors = await getAllDaysSelectorsToUpdate();
     for (let i = 0; i < tableRowsSelectors.length; i++) {
+      await selectMonthIfNeeded();
       const currentRow = await page.$(tableRowsSelectors[i]);
       const dayDescription = await (
         await currentRow.getProperty("innerText")
