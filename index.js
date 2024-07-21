@@ -56,11 +56,14 @@ const chromePaths = require("chrome-paths");
   }
 
   async function selectMonthIfNeeded() {
+    await page.setViewport({
+      width: 640,
+      height: 480,
+      deviceScaleFactor: 1,
+    });
     const currentMonth = (new Date().getMonth() + 1).toString();
     const selectedMonth = await page.$('[name="month"] option[selected]');
-    await page.evaluate(() => {
-      debugger;
-    });
+
 
     if (
       selectedMonth &&
