@@ -65,9 +65,9 @@ const chromePaths = require("chrome-paths");
       currentMonth !== (await selectedMonth?.[0]?.value)
     ) {
       //await page.select('[name="month"]', currentMonth);
-      await page.evaluate(() => {
+      await page.evaluate((currentMonth) => {
         document.querySelector('[name="month"]').value = currentMonth;
-      });
+      },currentMonth );
       await page.waitFor(2000);
     }
   }
