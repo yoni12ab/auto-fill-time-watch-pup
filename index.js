@@ -56,11 +56,6 @@ const chromePaths = require("chrome-paths");
   }
 
   async function selectMonthIfNeeded() {
-    await page.setViewport({
-      width: 640,
-      height: 480,
-      deviceScaleFactor: 1,
-    });
     const currentMonth = (new Date().getMonth() + 1).toString();
     const selectedMonth = await page.$('[name="month"] option[selected]');
 
@@ -69,7 +64,11 @@ const chromePaths = require("chrome-paths");
       selectedMonth &&
       currentMonth !== (await selectedMonth?.[0]?.value)
     ) {
-      await page.select('[name="month"]', currentMonth);
+      //await page.select('[name="month"]', currentMonth);
+      await page.evaluate(() => {
+        document.querySelector('[name="month"]').value = currentMonth;
+      });
+      await page.waitFor(2000);
     }
   }
 
