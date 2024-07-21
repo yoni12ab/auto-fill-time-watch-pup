@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 const puppeteer = require("puppeteer-core");
 const chromePaths = require("chrome-paths");
+
+const PAGE_WIDTH = 1700; //1920
+const PAGE_HEIGHT = 1080; //1080
+
 (async () => {
   console.log("process ", process.argv);
   const [, , COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD] = process.argv;
@@ -19,10 +23,10 @@ const chromePaths = require("chrome-paths");
     const launchOptions = {
       headless: false,
       executablePath: chromePaths.chrome, // '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // because we are using puppeteer-core so we must define this option
-      args: [`--window-size=1920,1080`],
+      args: [`--window-size=${PAGE_WIDTH},${PAGE_HEIGHT}`],
       defaultViewport: {
-        width: 1920,
-        height: 1080,
+        width: PAGE_WIDTH,
+        height: PAGE_HEIGHT,
       },
     };
 
@@ -30,8 +34,8 @@ const chromePaths = require("chrome-paths");
     page = await browser.newPage();
 
     await page.setViewport({
-      width: 1920,
-      height: 1080,
+      width: PAGE_WIDTH,
+      height: PAGE_HEIGHT,
       deviceScaleFactor: 1,
     });
     await page.goto("https://checkin.timewatch.co.il/punch/punch.php", {
@@ -59,16 +63,11 @@ const chromePaths = require("chrome-paths");
     const currentMonth = (new Date().getMonth() + 1).toString();
     const selectedMonth = await page.$('[name="month"] option[selected]');
 
-
-    if (
-      selectedMonth &&
-      currentMonth !== (await selectedMonth?.[0]?.value)
-    ) {
+    if (selectedMonth && currentMonth !== (await selectedMonth?.[0]?.value)) {
       //await page.select('[name="month"]', currentMonth);
       await page.evaluate((currentMonth) => {
         document.querySelector('[name="month"]').value = currentMonth;
-      },currentMonth );
-
+      }, currentMonth);
     }
   }
 
@@ -81,7 +80,6 @@ const chromePaths = require("chrome-paths");
   async function fillMissing() {
     const tableRowsSelectors = await getAllDaysSelectorsToUpdate();
     for (let i = 0; i < tableRowsSelectors.length; i++) {
-      await selectMonthIfNeeded();
       const currentRow = await page.$(tableRowsSelectors[i]);
       const dayDescription = await (
         await currentRow.getProperty("innerText")
