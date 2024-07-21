@@ -40,7 +40,7 @@ const chromePaths = require("chrome-paths");
 
     await login(COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD);
     await gotToReports();
-    await selectMonthIfNeeded();
+    //await selectMonthIfNeeded();
     await page.waitFor(3000);
     await fillMissing();
 
