@@ -40,7 +40,7 @@ const chromePaths = require("chrome-paths");
 
     await login(COMPANY_NUMBER, EMPLOYEE_NUMBER, PASSWORD);
     await gotToReports();
-    //await selectMonthIfNeeded();
+    await selectMonthIfNeeded();
     await page.waitFor(3000);
     await fillMissing();
 
@@ -60,7 +60,7 @@ const chromePaths = require("chrome-paths");
     const selectedMonth = await page.$('[name="month"] option[selected]');
     if (
       selectedMonth &&
-      currentMonth !== (await selectedMonth.getProperty("innerText"))
+      currentMonth !== (await selectedMonth?.[0]?.value)
     ) {
       await page.select('[name="month"]', currentMonth);
     }
